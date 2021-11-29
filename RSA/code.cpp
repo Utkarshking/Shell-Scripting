@@ -1,16 +1,110 @@
-#include<iostream>
-#include<string.h>
-#include<stdlib.h>
-#include<iomanip>
-#include <dirent.h>
-class DES{
-public:
+/*
+ * Data Encryption Standard
+ * 2015-11-27
+ * @Author Moming
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define fPath "Plaintext.txt"
+
 const int num = 16;
 const int length = 64;
 const int cdlength = 28;
 const int keylength = 48;
 const int lrlength = 32;
-public:
+
+void HexToBinary(int Hex[], int Binary[]);
+void BinaryToHex(int Binary[], int Hex[]);
+int IntPow(int x, int n);
+void GetSubkey(int key[], int Subkey[][keylength]);
+void LeftMove(int x[], int y[], int n);
+void Replace(int C[], int D[], int key[]);
+void Combine(int C[], int D[], int key[]);
+void Encrypt(int Plaintext[], int Subkey[][keylength], int Ciphertext[]);
+void ReplaceIP(int Plaintext[], int L[], int R[]);
+void ArrayCopy(int x[], int y[]);
+void EncryptCore(int output[], int L[], int R[], int K[]);
+void InverseReplaceIP(int output[], int L[], int R[]);
+void ESelect(int output[], int x[]);
+void Sbox(int x[], int y[]);
+void Reorder(int x[], int output[]);
+void Decrypt(int Ciphertext[], int Subkey[][keylength], int DePlaintext[]);
+void Display(int x[], int n);
+void DecToBinary(int x[], int n);
+
+int main()
+{
+    int i, Key[num], result[num], j, k, len, pos;
+    int OriginKey[length], OriginPlaintext[length], Ciphertext[length];
+    int Subkey[num][keylength];
+
+    char input[1000];
+    FILE *fp = NULL;
+
+    if((fp = fopen(fPath, "r")) == NULL)
+    {
+        printf("Can't open file!\n");
+        exit(1);
+    }
+
+    for(i = 0; (input[i] = fgetc(fp)) != EOF; i++){}
+
+    fclose(fp);
+
+    len = i;
+    int cycle = ceil(len / 8.0);
+    int plain[cycle * 64], temp[len], cmd[8];
+    pos = 0;
+
+    for(i = 0; i < len; i++)
+    {
+        temp[i] = (int)(input[i]);
+        DecToBinary(cmd, temp[i]);
+        for(j = 0; j < 8; j++, pos++)
+        {
+            plain[pos] = cmd[j];
+        }
+    }
+    for(; pos < cycle * 64; pos++)
+    {
+        plain[pos] = 0;
+    }
+
+    printf("Enter your 16 bits hexadecimal key:\n");
+
+    for(i = 0; i < num; i++)
+    {
+        scanf("%x", &Key[i]);
+    }
+
+    HexToBinary(Key, OriginKey);
+    GetSubkey(OriginKey, Subkey);
+
+    printf("\nThe Ciphertext is:\n");
+
+    for(i = 0; i < cycle; i++)
+    {
+        for(j = 0; j < 64; j++)
+        {
+            OriginPlaintext[j] = plain[i * 64 + j];
+        }
+
+        Encrypt(OriginPlaintext, Subkey, Ciphertext);
+
+        BinaryToHex(Ciphertext, result);
+        for(k = 0; k < 16; k++)
+        {
+            printf("%x", result[k]);
+        }
+    }
+
+    printf("\n");
+    return 0;
+}
+
 /* Dec to Binary */
 void DecToBinary(int x[], int n)
 {
@@ -378,271 +472,4 @@ void Display(int x[], int n)
     }
 
     printf("\n");
-}
-};
-// used for rmdir
-//#include<ftw.h>
-using namespace std;
-//change the directory
-void changedir(){
-	char s[100];
-	chdir("..");
-	// printing current working directory
-	printf("%s\n", getcwd(s, 100));
-}
-void dir(char* folder){
-	char s[100];
-	chdir(folder);
-	// printing current working directory
-	printf("%s\n", getcwd(s, 100));
-}
-//deletes a file 
-void delfile(char* file){
-	if (remove(file) == 0)
-	cout<<"Deleted successfully"<<endl;
-	else
-	cout<<"Unable to delete the file"<<endl;
-}
-// makes a directory
-void makedir(char* dirname){
-	bool check;
-	check=mkdir(dirname);
-	if(!check){
-		cout<<"directory created"<<endl;
-	}
-	else {
-		cout<<"directory already exists named :"<<dirname<<endl;
-	}
-}
-// displays the present work directory
-void pwd(){
-char buffer[FILENAME_MAX];
-_getcwd(buffer,FILENAME_MAX);
-cout<<"current work directory is\n"<<buffer;
-cout<<endl;
-}
-// lists all the files in the directory
-int ls()
-{   
-struct dirent *de;
-DIR *dr = opendir(".");
-if (dr == NULL)
-{
-printf("Could not open current directory");
-return 0;
-}
-while ((de = readdir(dr)) != NULL)
-printf("%s\n", de->d_name);
-closedir(dr);
-return 0;
-}
-// makes a file in the directory
-// not for every file 
-void makefile(char* filename){
-    FILE *fp = fopen(filename, "w");
-}
-// opens notepad using command line
-void notepad(string s){
-	string str="notepad \""+s+"\"";
-	system(str.c_str());
-}
-// making the function which launches des algorithm
-void launchdes(){
-	DES obj;
-	int i, Key[num], result[num], j, k, len, pos;
-    int OriginKey[length], OriginPlaintext[length], Ciphertext[length];
-    int Subkey[num][keylength];
-
-    char input[1000];
-    FILE *fp = NULL;
-
-    if((fp = fopen(fPath, "r")) == NULL)
-    {
-        printf("Can't open file!\n");
-        exit(1);
-    }
-
-    for(i = 0; (input[i] = fgetc(fp)) != EOF; i++){}
-
-    fclose(fp);
-
-    len = i;
-    int cycle = ceil(len / 8.0);
-    int plain[cycle * 64], temp[len], cmd[8];
-    pos = 0;
-
-    for(i = 0; i < len; i++)
-    {
-        temp[i] = (int)(input[i]);
-        obj.DecToBinary(cmd, temp[i]);
-        for(j = 0; j < 8; j++, pos++)
-        {
-            plain[pos] = cmd[j];
-        }
-    }
-    for(; pos < cycle * 64; pos++)
-    {
-        plain[pos] = 0;
-    }
-
-    printf("Enter your 16 bits hexadecimal key:\n");
-
-    for(i = 0; i < num; i++)
-    {
-        scanf("%x", &Key[i]);
-    }
-
-    obj.HexToBinary(Key, OriginKey);
-    obj.GetSubkey(OriginKey, Subkey);
-
-    printf("\nThe Ciphertext is:\n");
-
-    for(i = 0; i < cycle; i++)
-    {
-        for(j = 0; j < 64; j++)
-        {
-            OriginPlaintext[j] = plain[i * 64 + j];
-        }
-
-        obj.Encrypt(OriginPlaintext, Subkey, Ciphertext);
-
-        obj.BinaryToHex(Ciphertext, result);
-        for(k = 0; k < 16; k++)
-        {
-            printf("%x", result[k]);
-        }
-    }
-
-    printf("\n");
-}
-int main(){
-	// starting the time measuring the program execution time 
-	 time_t start,end;
-	 // starting the time 
-	 time(&start);
-	// taking the input from the dataset
-	#ifndef ONLINE_JUDGE
-    freopen("dataset.txt", "r", stdin);
-	#endif
-	// taken for the string and name 
-string cmd;
-string name;
-int size=name.size();
-// last char taken for '\0'
-char array[size+1];
-    int num;
-    cin>>num;
-    int ch;
-    cout<<"    WELCOME TO THE LINUX SHELL" <<endl;
-    cout<<" 1: for making directory" <<endl;
-    cout<<" 2: for displaying the present work directory" <<endl;
-    cout<<" 3: list all the files in that directory" <<endl;
-    cout<<" 4: back to previous directory" <<endl;
-    cout<<" 5: deletes a file in a directory" <<endl;
-    cout<<" 6. makes a file in a directory"<<endl;
-    cout<<" 7. moves to another directory"<<endl;
-	cout<<"	8: To open a file in notepad or a third party Editor"<<endl;
-	cout<<" 9: Encrypt the plain text to cipher text using :(RSA)"<<endl;
-    while(num){
-    cout<<"enter the choice"<<endl;
-    cin>>ch;
-    cout<<ch<<"\n";
-    switch(ch){
-    case 1:     cout<<"enter the command"<<endl;
-    			cout<<"anonymous_user@windows: ~$";
-                cin>>cmd>>name;
-                cout<<cmd<<" "<<name<<endl;
-                if(cmd=="mkdir"){
-                strcpy(array,name.c_str());
-                makedir(array);
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;	
-				}
-                break;
-    case 2:     cout<<"enter the command :-"<<endl;
-    			cout<<"anonymous_user@windows: ~$";
-                cin>>cmd;
-                if(cmd=="pwd"){
-                cout<<cmd<<endl;
-                 pwd();	
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;		
-				}
-                break;
-    case 3:     cout<<"enter the command :-"<<endl;
-    			cout<<"anonymous_user@windows: ~$";
-                cin>>cmd;
-                cout<<cmd<<endl;
-                if(cmd=="ls"){
-                ls();
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;		
-				}
-                break;
-	case 4:     cout<<"enter the command :-"<<endl;
-				cout<<"anonymous_user@windows: ~$";
-				cin>>cmd>>name;
-				if(cmd=="cd"){
-					changedir();
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;	
-				}
-				break;	
-	case 5:     cout<<"enter the command :-"<<endl;
-				cout<<"anonymous_user@windows: ~$";
-				cin>>cmd>>name;
-				if(cmd=="rm"){
-				strcpy(array,name.c_str());
-				delfile(array);	
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;	
-				}
-				break;
-	case 6:		cout<<"enter the command :-"<<endl;
-				cout<<"anonymous_user@windows: ~$";
-                cin>>cmd>>name;
-                if(cmd=="touch"){
-                	strcpy(array,name.c_str());
-                	makefile(array);
-				}
-				else{
-					cout<<cmd<<" :Command Not found"<<endl;	
-				}
-				break;
-	case 7:		cout<<"enter the command"<<endl;
-				cout<<"anonymous_user@windows: ~$";
-				cin>>cmd>>name;
-				if(cmd=="cd"){
-					strcpy(array,name.c_str());
-					dir(array);
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;	
-				}
-	case 8:	 	cout<<"enter the command"<<endl;	
-				cout<<"anonymous_user@windows: ~$";
-				cin>>cmd>>name;
-				if(cmd=="notepad" or cmd=="Notepad"){
-					notepad(name);
-				}
-				break;
-	case 9:     cout<<"enter the command"<<endl;
-				cout<<"anonymous_user@windows: ~$"<<endl;
-				cin>>cmd>>name;
-				if(cmd="RSA"){
-					
-				}	
-	default:    cout<<"You entered a wrong choice"<<endl;
-				break;			
-    }
-    num--;
-}
-	time(&end);
-	double time_taken=double(end-start);
-	cout<<"time taken for the program: "<<fixed<<time_taken<<setprecision(5)<<endl;
 }
