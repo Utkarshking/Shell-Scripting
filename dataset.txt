@@ -1,4 +1,3 @@
-2
-8   
-notepad ut.txt
+1
 9
+DES rajat.txt

@@ -3,11 +3,9 @@
  * 2015-11-27
  * @Author Moming
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-
 #define fPath "Plaintext.txt"
 
 const int num = 16;

@@ -2,14 +2,18 @@
 #include<string.h>
 #include<stdlib.h>
 #include<iomanip>
+#include<cmath>
 #include <dirent.h>
-class DES{
-public:
+#define fPath 
+// used for rmdir
+//#include<ftw.h>
+using namespace std;
 const int num = 16;
 const int length = 64;
 const int cdlength = 28;
 const int keylength = 48;
 const int lrlength = 32;
+class DES{
 public:
 /* Dec to Binary */
 void DecToBinary(int x[], int n)
@@ -379,10 +383,8 @@ void Display(int x[], int n)
 
     printf("\n");
 }
+
 };
-// used for rmdir
-//#include<ftw.h>
-using namespace std;
 //change the directory
 void changedir(){
 	char s[100];
@@ -447,23 +449,22 @@ void notepad(string s){
 	system(str.c_str());
 }
 // making the function which launches des algorithm
-void launchdes(){
-	DES obj;
-	int i, Key[num], result[num], j, k, len, pos;
+void launchdes(char* filename){
+    int i, Key[num], result[num], j, k, len, pos;
     int OriginKey[length], OriginPlaintext[length], Ciphertext[length];
     int Subkey[num][keylength];
-
+    DES obj;
     char input[1000];
     FILE *fp = NULL;
 
-    if((fp = fopen(fPath, "r")) == NULL)
+    if((fp = fopen(filename, "r")) == NULL)
     {
         printf("Can't open file!\n");
         exit(1);
     }
-
+    // setting the input by using the file pointer and copying it into the input array
     for(i = 0; (input[i] = fgetc(fp)) != EOF; i++){}
-
+    // thus closing the file 
     fclose(fp);
 
     len = i;
@@ -484,17 +485,24 @@ void launchdes(){
     {
         plain[pos] = 0;
     }
-
+    FILE* demo=NULL;
     printf("Enter your 16 bits hexadecimal key:\n");
-
+    #ifndef ONLINE_JUDGE
+    freopen("key.txt", "r", stdin);
+    #endif
+    //input phase of the hexadecimal key
     for(i = 0; i < num; i++)
-    {
-        scanf("%x", &Key[i]);
+    {  
+        // scanf("%x", &Key[i]);  
+        cin>>Key[i];
+    }
+    // output to the console 
+    for(int i=0;i<num;i++){
+        printf("%x",Key[i]);
     }
 
     obj.HexToBinary(Key, OriginKey);
     obj.GetSubkey(OriginKey, Subkey);
-
     printf("\nThe Ciphertext is:\n");
 
     for(i = 0; i < cycle; i++)
@@ -533,7 +541,7 @@ char array[size+1];
     int num;
     cin>>num;
     int ch;
-    cout<<"    WELCOME TO THE LINUX SHELL" <<endl;
+    cout<<" WELCOME TO THE LINUX SHELL" <<endl;
     cout<<" 1: for making directory" <<endl;
     cout<<" 2: for displaying the present work directory" <<endl;
     cout<<" 3: list all the files in that directory" <<endl;
@@ -624,19 +632,29 @@ char array[size+1];
 				else{
 				cout<<cmd<<" :Command Not found"<<endl;	
 				}
+                break;
 	case 8:	 	cout<<"enter the command"<<endl;	
 				cout<<"anonymous_user@windows: ~$";
 				cin>>cmd>>name;
 				if(cmd=="notepad" or cmd=="Notepad"){
 					notepad(name);
 				}
+                else{
+                    cout<<cmd<<" :invalid command"<<endl;
+                }
 				break;
 	case 9:     cout<<"enter the command"<<endl;
 				cout<<"anonymous_user@windows: ~$"<<endl;
 				cin>>cmd>>name;
-				if(cmd="RSA"){
-					
-				}	
+				if(cmd=="DES"){
+                    cout<<cmd<<" "<<name<<"\n";
+					strcpy(array,name.c_str());
+                    launchdes(array);
+				}
+                else{
+                    cout<<"invalid output"<<endl;
+                }
+                break;	
 	default:    cout<<"You entered a wrong choice"<<endl;
 				break;			
     }
