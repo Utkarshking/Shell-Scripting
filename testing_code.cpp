@@ -3,25 +3,22 @@
 #include<stdlib.h>
 #include<iomanip>
 #include<cmath>
-#include <dirent.h>
-// used for rmdir
-//#include<ftw.h>
+#include<dirent.h>
+// #include<ftw.h>
 using namespace std;
 //change the directory
-void changedir(){
+void changedir(string folder){
 	char s[100];
-	chdir("..");
-	// printing current working directory
-	printf("%s\n", getcwd(s, 100));
+	// // printing current working directory
+    if(folder==".."){
+        chdir("..");
+    }
+    else{
+        chdir(folder.c_str());
+    }
+    printf("%s\n", getcwd(s, 100));
 }
-
-void dir(char* folder){
-	char s[100];
-	chdir(folder);
-	// printing current working directory
-	printf("%s\n", getcwd(s, 100));
-}
-//deletes a file 
+// deletes a file
 void delfile(char* file){
 	if (remove(file) == 0)
 	cout<<"Deleted successfully"<<endl;
@@ -33,7 +30,7 @@ void makedir(char* dirname){
 	bool check;
 	check=mkdir(dirname);
 	if(!check){
-		cout<<"directory created"<<endl;
+	  cout<<"directory created"<<endl;
 	}
 	else {
 		cout<<"directory already exists named :"<<dirname<<endl;
@@ -43,7 +40,7 @@ void makedir(char* dirname){
 void pwd(){
 char buffer[FILENAME_MAX];
 _getcwd(buffer,FILENAME_MAX);
-cout<<"current work directory is\n"<<buffer;
+cout<<"\n"<<buffer;
 cout<<endl;
 }
 // lists all the files in the directory
@@ -93,25 +90,23 @@ char array[size+1];
     cout<<" 1: for making directory" <<endl;
     cout<<" 2: for displaying the present work directory" <<endl;
     cout<<" 3: list all the files in that directory" <<endl;
-    cout<<" 4: back to previous directory " <<endl;
+    cout<<" 4: change the directory " <<endl;
     cout<<" 5: deletes a file in a directory" <<endl;
     cout<<" 6. makes a file in a directory"<<endl;
-    cout<<" 7. moves to another directory"<<endl;
-	cout<<"	8: To open a file in notepad or a third party Editor"<<endl;
-	cout<<" 9: Encrypt the plain text to cipher text using :(RSA)"<<endl;
+	cout<<"	7: To open a file in notepad or a third party Editor"<<endl;
+	cout<<" 8: Encrypt the plain text to cipher text using :(RSA)"<<endl;
     while(num){
     cout<<"enter the choice"<<endl;
     cin>>ch;
     cout<<ch<<"\n";
     switch(ch){
-    case 1:     cout<<"enter the command"<<endl;
+    case 1:     //cout<<"enter the command"<<endl;
     			cout<<"anonymous_user@windows: ~$";
                 cin>>cmd>>name;
                 cout<<cmd<<" "<<name<<endl;
                 if(cmd=="mkdir"){
-                strcpy(array,name.c_str());
-                makedir(array);
-				}
+                makedir(array);				
+                }
 				else{
 				cout<<cmd<<" :Command Not found"<<endl;	
 				}
@@ -119,8 +114,8 @@ char array[size+1];
     case 2:     cout<<"enter the command :-"<<endl;
     			cout<<"anonymous_user@windows: ~$";
                 cin>>cmd;
-                if(cmd=="pwd"){
                 cout<<cmd<<endl;
+                if(cmd=="pwd"){
                  pwd();	
 				}
 				else{
@@ -139,10 +134,13 @@ char array[size+1];
 				}
                 break;
 	case 4:     cout<<"enter the command :-"<<endl;
-				cout<<"anonymous_user@windows: ~$";
-				cin>>cmd>>name;
+                cin>>cmd>>name;
+				cout<<"anonymous_user@windows: ~$"<<cmd<<" "<<name;
+                cout<<endl;
+                // cout<<cmd<<" "<<name;
 				if(cmd=="cd"){
-					changedir();
+                    strcpy(array,name.c_str());
+					changedir(array);
 				}
 				else{
 				cout<<cmd<<" :Command Not found"<<endl;	
@@ -170,18 +168,7 @@ char array[size+1];
 					cout<<cmd<<" :Command Not found"<<endl;	
 				}
 				break;
-	case 7:		cout<<"enter the command"<<endl;
-				cout<<"anonymous_user@windows: ~$";
-				cin>>cmd>>name;
-				if(cmd=="cd"){
-					strcpy(array,name.c_str());
-					dir(array);
-				}
-				else{
-				cout<<cmd<<" :Command Not found"<<endl;	
-				}
-                break;
-	case 8:	 	cout<<"enter the command"<<endl;	
+	case 7:	 	cout<<"enter the command"<<endl;	
 				cout<<"anonymous_user@windows: ~$";
 				cin>>cmd>>name;
 				if(cmd=="notepad" or cmd=="Notepad"){

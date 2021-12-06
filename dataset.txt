@@ -1,3 +1,15 @@
-1
-9
-DES rajat.txt
+7
+2
+pwd
+4
+cd ..
+4
+cd js30
+3
+ls 
+2
+pwd
+4 
+cd JavaScript30
+3
+ls
