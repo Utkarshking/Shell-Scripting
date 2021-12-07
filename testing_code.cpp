@@ -4,6 +4,8 @@
 #include<iomanip>
 #include<cmath>
 #include<dirent.h>
+#include<fstream>
+#include "RSA.h"
 // #include<ftw.h>
 using namespace std;
 //change the directory
@@ -40,7 +42,7 @@ void makedir(char* dirname){
 void pwd(){
 char buffer[FILENAME_MAX];
 _getcwd(buffer,FILENAME_MAX);
-cout<<"\n"<<buffer;
+cout<<buffer;
 cout<<endl;
 }
 // lists all the files in the directory
@@ -111,7 +113,7 @@ char array[size+1];
 				cout<<cmd<<" :Command Not found"<<endl;	
 				}
                 break;
-    case 2:     cout<<"enter the command :-"<<endl;
+    case 2:     //cout<<"enter the command :-"<<endl;
     			cout<<"anonymous_user@windows: ~$";
                 cin>>cmd;
                 cout<<cmd<<endl;
@@ -133,20 +135,21 @@ char array[size+1];
 				cout<<cmd<<" :Command Not found"<<endl;		
 				}
                 break;
-	case 4:     cout<<"enter the command :-"<<endl;
+	case 4:     //cout<<"enter the command :-"<<endl;
                 cin>>cmd>>name;
 				cout<<"anonymous_user@windows: ~$"<<cmd<<" "<<name;
                 cout<<endl;
                 // cout<<cmd<<" "<<name;
 				if(cmd=="cd"){
-                    strcpy(array,name.c_str());
-					changedir(array);
+                    // strcpy(array,name.c_str());
+					// changedir(array);
+                    changedir(name);
 				}
 				else{
 				cout<<cmd<<" :Command Not found"<<endl;	
 				}
 				break;	
-	case 5:     cout<<"enter the command :-"<<endl;
+	case 5:     //cout<<"enter the command :-"<<endl;
 				cout<<"anonymous_user@windows: ~$";
 				cin>>cmd>>name;
 				if(cmd=="rm"){
@@ -157,7 +160,7 @@ char array[size+1];
 				cout<<cmd<<" :Command Not found"<<endl;	
 				}
 				break;
-	case 6:		cout<<"enter the command :-"<<endl;
+	case 6:		//cout<<"enter the command :-"<<endl;
 				cout<<"anonymous_user@windows: ~$";
                 cin>>cmd>>name;
                 if(cmd=="touch"){
@@ -168,7 +171,7 @@ char array[size+1];
 					cout<<cmd<<" :Command Not found"<<endl;	
 				}
 				break;
-	case 7:	 	cout<<"enter the command"<<endl;	
+	case 7:	 	//cout<<"enter the command"<<endl;	
 				cout<<"anonymous_user@windows: ~$";
 				cin>>cmd>>name;
 				if(cmd=="notepad" or cmd=="Notepad"){
@@ -178,6 +181,15 @@ char array[size+1];
                     cout<<cmd<<" :invalid command"<<endl;
                 }
 				break;	
+	case 8:		cout<<"anonymous_user@windows: ~$";
+				cin>>cmd>>name;
+				if(cmd=="RSA" and name=="rsadataset.txt"){
+					launchrsa();
+				}
+				else{
+					cout<<cmd<<" :invalid command"<<endl;
+				}
+				break;
 	default:    cout<<"You entered a wrong choice"<<endl;
 				break;			
     }
@@ -186,4 +198,4 @@ char array[size+1];
 	time(&end);
 	double time_taken=double(end-start);
 	cout<<"time taken for the program: "<<fixed<<time_taken<<setprecision(5)<<endl;
-}
+}   
